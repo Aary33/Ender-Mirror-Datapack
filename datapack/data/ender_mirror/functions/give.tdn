@@ -1,0 +1,9 @@
+@on compile
+
+define function magic_mirror {
+    give @s $itm_ender_mirror
+}
+
+define function broken_mirror {
+    give @s $itm_broken_mirror
+}

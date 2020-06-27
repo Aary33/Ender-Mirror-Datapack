@@ -1,0 +1,11 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "item/carrot_on_a_stick"
+	},
+	
+	"overrides": [
+		{"predicate": {"custom_model_data":1011090}, "model": "ender_mirror:item/broken_mirror"},
+		{"predicate": {"custom_model_data":1011091}, "model": "ender_mirror:item/ender_mirror"}
+	]
+}

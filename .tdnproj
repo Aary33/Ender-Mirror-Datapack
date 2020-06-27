@@ -1,0 +1,24 @@
+{
+  "target-version": [
+    1,
+    15,
+    0
+  ],
+  "default-namespace": "ender_mirror",
+  "language-level": 3,
+  "datapack-output": "C:\\Users\\Aaron\\AppData\\Roaming\\.minecraft\\saves\\Datapack Development\\datapacks\\ender_mirror_v1.0.0",
+  "resources-output": "C:\\Users\\Aaron\\AppData\\Roaming\\.minecraft\\resourcepacks\\ender_mirror_v1.0.0-resources.zip",
+  "export-comments": true,
+  "strict-nbt": false,
+  "strict-text-components": false,
+  "anonymous-function-name": "_anonymous*",
+  "game-logger": {
+    "compact": false,
+    "timestamp-enabled": true,
+    "pos-enabled": true,
+    "line-number-enabled": false
+  },
+  "clear-datapack-output": true,
+  "clear-resources-output": true,
+  "export-gamelog": true
+}

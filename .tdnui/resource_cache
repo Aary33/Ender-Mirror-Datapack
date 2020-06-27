@@ -1,0 +1,12 @@
+{
+  "assets/minecraft/models/item/carrot_on_a_stick.json": -413257074,
+  "assets/ender_mirror/models/item/broken_mirror.json": 784399960,
+  "assets/ender_mirror/models/item/ender_mirror.json": 1647250157,
+  "assets/minecraft/sounds/custom/magic_mirror/use.ogg": 393153436,
+  "assets/ender_mirror/textures/item/ender_mirror.png": -528512482,
+  "assets/ender_mirror/textures/item/ender_mirror.png.mcmeta": -902439100,
+  "assets/minecraft/sounds.json": -924769977,
+  "pack.mcmeta": -482493130,
+  "assets/ender_mirror/textures/item/broken_mirror.png": 304056033,
+  "pack.png": 1237462732
+}

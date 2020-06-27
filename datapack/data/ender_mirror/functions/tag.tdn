@@ -1,0 +1,82 @@
+@on compile
+@priority 0
+
+define function second {
+    global var f_second = resource</>
+    
+    set @a -> eMirror.age.s += 1
+    
+    as @a[scores={eMirror.age.s=1}] at @s  
+    store result score worldSpawn eMirror.x
+        data get entity @s Pos[0]
+    
+    as @a[scores={eMirror.age.s=1}] at @s  
+    store result score worldSpawn eMirror.y
+        data get entity @s Pos[1]
+    
+    as @a[scores={eMirror.age.s=1}] at @s  
+    store result score worldSpawn eMirror.z
+        data get entity @s Pos[2]
+    
+    as @a[scores={eMirror.age.s=1}] at @s  
+    store result score worldSpawn eMirror.dim
+        data get entity @s Dimension
+    
+    schedule function / 1s replace
+}
+
+define function tick {
+    @tag tick
+    
+    
+    #Animation
+    as @a[scores={eMirror.refract=..-1}] at @s run function $f_charge
+    as @a[scores={eMirror.refract=1..}] at @s run function $f_cooldown
+    
+    as @a[scores={eMirror.refract=-1}] at @s run function $f_set_home
+    as @a[scores={eMirror.refract=-1}] at @s run function $f_go_home
+    
+    #Balance refractory periods
+    as @a at @s unless score @s eMirror.refract matches 0 run scoreboard players add @s eMirror.refract 0
+    set @a[scores={eMirror.refract=1..}] -> eMirror.refract -= 1
+    set @a[scores={eMirror.refract=..-1}] -> eMirror.refract += 1
+    
+    
+}
+
+define function init {
+    @tag load
+    
+    scoreboard objectives add eMirror.refract dummy {"text":"Ender Mirror Cooldown"}
+    scoreboard objectives add eMirror.x dummy {"text":"Ender Mirror X"}
+    scoreboard objectives add eMirror.y dummy {"text":"Ender Mirror Y"}
+    scoreboard objectives add eMirror.z dummy {"text":"Ender Mirror Z"}
+    scoreboard objectives add eMirror.dim dummy {"text":"Ender Mirror Dimension"}
+    scoreboard objectives add eMirror.age.s dummy {"text":"Ender Mirror Age(s)"}
+    
+    
+    #Set default cooldown and charge
+    unless score defaultCharge eMirror.refract matches -1200..0 run scoreboard players set defaultCharge eMirror.refract $int_charge
+    unless score defaultCooldown eMirror.refract matches 0..1200 run scoreboard players set defaultCooldown eMirror.refract $int_cooldown
+    
+    unless score worldSpawn eMirror.x matches -3000000..3000000 run scoreboard players set worldSpawn eMirror.x 0
+    unless score worldSpawn eMirror.y matches 0..255 run scoreboard players set worldSpawn eMirror.y 0
+    unless score worldSpawn eMirror.z matches -3000000..3000000 run scoreboard players set worldSpawn eMirror.z 0
+    
+    
+    set #1 -> eMirror.y = 1
+    
+    schedule function $f_second 1s replace
+    tellraw @a ["",{"text":"> ","color":"gray"},{"text":"[Ender Mirror]","color":"light_purple"},{"text":"[1.0.0]","color":"dark_gray"},{"text":" module loaded.","color":"gray"}]    
+    
+}
+
+
+define function uninstall {
+    scoreboard objectives remove eMirror.refract
+    scoreboard objectives remove eMirror.x
+    scoreboard objectives remove eMirror.y
+    scoreboard objectives remove eMirror.z
+    scoreboard objectives remove eMirror.dim
+    scoreboard objectives remove eMirror.age.s
+}

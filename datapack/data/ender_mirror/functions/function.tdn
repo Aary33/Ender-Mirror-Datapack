@@ -1,0 +1,230 @@
+@on compile
+@priority 1
+
+#Config
+#
+#
+
+#Charge: Time in ticks to charge
+global var int_charge = -40
+
+#Cooldown: Time in ticks before using again
+global var int_cooldown = 60
+
+#Dependencies
+#
+#
+global var snd_mirror_use = resource<custom.magic_mirror.use>
+
+#Initialize objectives
+#
+#
+
+define objective eMirror.refract dummy {"text":"Ender Mirror Cooldown"}
+define objective eMirror.x dummy {"text":"Ender Mirror X"}
+define objective eMirror.y dummy {"text":"Ender Mirror Y"}
+define objective eMirror.z dummy {"text":"Ender Mirror Z"}
+define objective eMirror.dim dummy {"text":"Ender Mirror Dimension"}
+define objective eMirror.age.s dummy {"text":"Ender Mirror Age(s)"}
+
+#Items
+#
+#
+
+define item itm_broken_mirror minecraft:carrot_on_a_stick#1011090 {
+    default name { "text" : "Broken Mirror", "color" : "white", "italic" : false}
+
+    default lore [
+            [
+                {"text" : "A frame of what once was.",
+                    "color" : "dark_purple",
+                    "italic" : false
+                }]
+            ]
+
+    default nbt {
+    }
+
+
+}
+
+define item itm_ender_mirror minecraft:carrot_on_a_stick#1011091 {
+    default name { "text" : "Ender Mirror", "color" : "yellow", "italic" : false}
+
+    default lore [
+                [
+                {"text" : "Gaze into the eye to return home.",
+                    "color" : "dark_purple",
+                    "italic" : false
+                }]
+            ]
+
+    default nbt {
+    }
+    
+    #Functions
+    #
+    #
+    
+    function position_home {
+        global var f_position_home = resource</>
+        
+        
+        store result entity @s Pos[0] double 1
+            scoreboard players get @p eMirror.x
+        store result entity @s Pos[1] double 1
+            scoreboard players get @p eMirror.y
+        store result entity @s Pos[2] double 1
+            scoreboard players get @p eMirror.z
+        
+        
+        at @s
+        if score @p[tag=eMirror_tp] eMirror.dim matches -1
+        in minecraft:the_nether
+            tp @s ~0.5 ~ ~0.5
+        at @s
+        if score @p[tag=eMirror_tp] eMirror.dim matches 0
+        in minecraft:overworld
+            tp @s ~0.5 ~ ~0.5
+        at @s
+        if score @p[tag=eMirror_tp] eMirror.dim matches 1
+        in minecraft:the_end
+            tp @s ~0.5 ~ ~0.5
+        
+        at @s
+            tp @a[tag=eMirror_tp] @s
+        
+        tag @a remove eMirror_tp
+        
+        
+        kill @s
+
+    }
+    
+    function set_home {
+        global var f_set_home = resource</>
+        
+        #Assigns world spawn to home
+        unless data entity @s SpawnX
+        unless data entity @s SpawnY
+        unless data entity @s SpawnZ
+        expand {
+            tellraw @s ["",{"text":"No bed found. Teleporting to spawn.","color":"gray","italic":true}]
+            set @s -> eMirror.x = worldSpawn -> eMirror.x
+            set @s -> eMirror.y = worldSpawn -> eMirror.y
+            set @s -> eMirror.z = worldSpawn -> eMirror.z
+            set @s -> eMirror.dim = worldSpawn -> eMirror.dim
+        }
+        
+        # Assigns bed to home
+        if data entity @s SpawnX
+        if data entity @s SpawnY
+        if data entity @s SpawnZ
+        expand {
+            tellraw @s ["",{"text":"Teleporting home.","color":"gray","italic":true}]
+            store result score @s eMirror.x
+                data get entity @s SpawnX
+            store result score @s eMirror.y
+                data get entity @s SpawnY
+            store result score @s eMirror.z
+                data get entity @s SpawnZ
+            set @s -> eMirror.dim = 0
+        }
+        
+        
+        
+        set @s -> eMirror.y += #1 -> eMirror.y 
+        
+    }
+    
+    function go_home {
+        global var f_go_home = resource</>
+        
+        # Teleports the player to their set home
+
+        if score @s eMirror.dim matches -1 in minecraft:the_nether
+            tp @s ~ ~ ~
+        if score @s eMirror.dim matches 0 in minecraft:overworld
+            tp @s ~ ~ ~
+        if score @s eMirror.dim matches 1 in minecraft:the_end
+            tp @s ~ ~ ~
+        
+        at @s
+            summon $ent_marker
+        tag @s add eMirror_tp
+        as @e[tag=eMirror_marker,sort=nearest,limit=1] at @s run function $f_position_home
+        
+        set @s -> eMirror.refract = $int_cooldown
+
+    }
+    
+    
+    #Charge effects
+    function charge {
+        global var f_charge = resource</>
+    
+        #At start
+        if score @s eMirror.refract matches $int_charge
+            run playsound $snd_mirror_use player @a ~ ~ ~ 1 0.8 0
+        
+        #At end
+        if score @s eMirror.refract matches -1
+            run particle minecraft:portal ~ ~1 ~ 0 0 0 1 50 normal
+        
+        #Always
+        particle minecraft:end_rod ~ ~1 ~ 0.1 0.1 0.1 0.04 1 normal @a
+        particle minecraft:dragon_breath ~ ~1 ~ 0.2 0.2 0.2 0.04 1 normal @a
+    }
+    
+    #Cooldown effects
+    function cooldown {
+        global var f_cooldown = resource</>
+        
+        var int_first_tick = $int_cooldown
+        eval int_first_tick -= 1
+        
+        #At start
+        if score @s eMirror.refract matches $int_first_tick
+            run playsound minecraft:entity.enderman.teleport player @a ~ ~ ~ 1 0.8 0
+        if score @s eMirror.refract matches $int_first_tick
+            run particle minecraft:portal ~ ~1 ~ 0 0 0 1 50 normal
+        
+        #At end
+        
+        #Always
+        particle minecraft:witch ~ ~1 ~ 0.90 0.65 0.90 0 1 normal
+        particle minecraft:portal ~ ~1 ~ 0.30 0.65 0.30 0 2 normal
+    }
+
+
+    
+    #On Use
+    on used function use {
+        if entity @s[scores={eMirror.refract=0}]
+            set @s -> eMirror.refract = $int_charge
+        
+    }
+}
+
+# Functions
+#
+#
+
+# Entities
+#
+#
+
+define entity ent_marker minecraft:armor_stand {
+    default name ["",
+            {"text":"Ender Mirror Marker"}
+    ]
+    
+    default nbt {
+        Tags:["eMirror_marker"],
+        NoGravity:1b,
+        Invisible:1b,
+        Marker:1b
+    }
+    
+    
+}

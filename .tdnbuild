@@ -1,0 +1,21 @@
+{
+  "input-resources": "(automatically selected by Trident-UI)",
+  "output": {
+    "directories": {
+      "data-pack": "C:\\Users\\Aaron\\AppData\\Roaming\\.minecraft\\saves\\Datapack Development\\datapacks\\ender_mirror_v1.0.0",
+      "resource-pack": "C:\\Users\\Aaron\\AppData\\Roaming\\.minecraft\\resourcepacks\\ender_mirror_v1.0.0-resources.zip"
+    },
+    "clean-directories": {
+      "data-pack": true,
+      "resource-pack": true
+    },
+    "export-comments": true,
+    "export-gamelog": true
+  },
+  "trident-ui": {
+    "actions": {
+      "pre": [],
+      "post": []
+    }
+  }
+}
